@@ -1,6 +1,10 @@
 import os
+import csv 
 
 frame_width = 50
+
+# Product data set storing table
+product_data = []
 
 def main():
     # Define the main menu options
