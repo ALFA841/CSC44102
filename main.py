@@ -1,3 +1,4 @@
+from itertools import product
 import os
 import csv 
 from datetime import datetime, date
@@ -31,7 +32,7 @@ def add_inventory():
             except ValueError:
                 print("Invalid input. Please enter a valid integer.")
 
-    def product_price():
+    def get_product_price():
         while True:
             try:
                 price = float(input("Enter the product price: "))
@@ -42,43 +43,58 @@ def add_inventory():
             except ValueError:
                 print("Invalid input. Please enter a valid number.")
 
+    def get_product_quantity(i):
+        while True:
+            try:
+                quantity = int(input(f"Enter the quantity of product {i}: "))
+                if quantity < 0:
+                    print("Quantity cannot be negative. Please enter a valid quantity.")
+                else:
+                    return quantity
+            except ValueError:
+                print("Invalid input. Please enter a valid integer.")
+
     print("Add Inventory")
     num_products = number_of_products()           
-    price = product_price()
+    #Extra unnecessary code removed to avoid redundancy. The price is now collected for each product individually.
+    #price = get_product_price()
+
     # Add the product to the inventory
     product_added = []
 
     for i in range(1, num_products + 1):
         product_name = input(f"Enter the name of product {i}: ")
-        product_quantity = input(f"Enter the quantity of product {i}: ")
+        product_quantity = get_product_quantity(i)
         product_date = enter_product_date(f"Enter the date for product {i} (YYYY-MM-DD) or leave blank for today: ")
         # Use the same price for all products added in this batch
-        product_price = price  
-        product_added.append([product_name, product_date, product_quantity, product_price])
-
+        product_price = get_product_price()
+        
+        #product_added.append([product_name, product_date, product_quantity, product_price])
+        #product_added.append(product)
+        
         product = {
-            product_name: product_name,
-            product_date: product_date,
-            product_quantity: product_quantity,
-            product_price: product_price,
+            "Name": product_name,
+            "Date": product_date,
+            "Quantity": product_quantity,
+            "Price": product_price,
         }
         product_data.append(product)
         product_added.append(product)
 
     print("\n" + "=" * frame_width)
-    print(f"{"S.I":<6}{"Product Name":<20}{"Date":<15}{"Quantity":<10}{"Price":<10}{"Total":<10}")
+    print(f"{"S.I":<6}{"Product Name":<20}{"Date":<15}{"Quantity":<10}{"Price":<10}{"Total":<12}")
     print("=" * frame_width)
 
     gross_price = 0
     for index, product in enumerate(product_added, start=1):
-        total_price = float(product[3]) * int(product[2])
+        total_price = float(product["Quantity"]) * float(product["Price"])
         gross_price += total_price
-        print(f"{index:<6}{product[0]:<20}{product[1]:<15}{product[2]:<10}{product[3]:<10}{total_price:<10}")
-    
-    print("=" * frame_width)
-    print(f"{"Gross Price":<6}{"":<20}{"":<15}{"":<10}{"":<10}{gross_price:<10}")
-    print("=" * frame_width)
+        print(f"{index:<6}{product['Name']:<20}{product['Date']:<15}{product['Quantity']:<10}{product['Price']:<10}{total_price:<12}")
 
+    print("=" * frame_width)
+    print(f"{"Gross Price#":<6}{"":<20}{"":<15}{"":<10}{"":<10}{gross_price:<2}")
+    print("=" * frame_width)
+    
     input("\nPress Enter to return to the main menu...")
 
 
