@@ -1,9 +1,8 @@
 from itertools import product
 import os
-import csv 
 from datetime import datetime, date
 
-frame_width = 50
+frame_width = 75
 
 # Product data set storing table
 product_data = []
@@ -81,7 +80,10 @@ def add_inventory():
         product_data.append(product)
         product_added.append(product)
 
-    print("\n" + "=" * frame_width)
+    print("=" * frame_width)
+    print(f'{"#":<15}{"Add Inventory":^{frame_width - 30}}{"#":>15}')
+    print("=" * frame_width)
+    #print("\n" + "=" * frame_width)
     print(f"{"S.I":<6}{"Product Name":<20}{"Date":<15}{"Quantity":<10}{"Price":<10}{"Total":<12}")
     print("=" * frame_width)
 
@@ -94,8 +96,74 @@ def add_inventory():
     print("=" * frame_width)
     print(f"{"Gross Price#":<6}{"":<20}{"":<15}{"":<10}{"":<10}{gross_price:<2}")
     print("=" * frame_width)
-    
+
     input("\nPress Enter to return to the main menu...")
+
+def view_inventory():
+    if not product_data:
+        print("No products in inventory.")
+        input("Press Enter to return to the main menu...")
+        return
+
+    print("=" * frame_width)
+    print(f'{"#":<15}{"View Inventory":^{frame_width - 30}}{"#":>15}')
+    print("=" * frame_width)
+    #print("\n" + "=" * frame_width)
+    print(f"{"S.I":<6}{"Product Name":<20}{"Date":<15}{"Quantity":<10}{"Price":<10}{"Total":<12}")
+    print("=" * frame_width)
+
+    gross_price = 0
+
+    # Sort by product name
+    sorted_inventory = sorted(product_data, key=lambda product: product["Name"])  
+    #for index, product in enumerate(product_data, start=1):
+    for index, product in enumerate(sorted_inventory, start=1):
+        total_price = float(product["Quantity"]) * float(product["Price"])
+        gross_price += total_price
+        print(f"{index:<6}{product['Name']:<20}{product['Date']:<15}{product['Quantity']:<10}{product['Price']:<10}{total_price:<12}")
+
+    print("=" * frame_width)
+    print(f"{"Gross Price#":<6}{"":<20}{"":<15}{"":<10}{"":<10}{gross_price:<2}")
+    print("=" * frame_width)
+
+    input("\nPress Enter to return to the main menu...")
+
+def save_inventory():
+    # Save the product data to a file
+    if not product_data:
+        print("No products to save.")
+        return
+
+    try:
+        with open("inventory_data.txt", "w") as file:
+            file.write("=" * frame_width + "\n")
+            file.write(f'{"#":<15}{"Inventory Data":^{frame_width - 30}}{"#":>15}\n')
+            file.write("=" * frame_width + "\n")
+
+            file.write(f"{"S.I":<6}{"Product Name":<20}{"Date":<15}{"Quantity":<10}{"Price":<10}{"Total":<12}\n")
+            file.write("=" * frame_width + "\n")
+
+            gross_price = 0
+
+            for index, product in enumerate(product_data, start=1):
+                total_price = float(product["Quantity"]) * float(product["Price"])
+                gross_price += total_price
+                file.write(f"{index:<6}{product['Name']:<20}{product['Date']:<15}{product['Quantity']:<10}{product['Price']:<10}{total_price:<12}\n")
+
+            file.write("=" * frame_width + "\n")
+            file.write(f"{"Gross Price#":<6}{"":<20}{"":<15}{"":<10}{"":<10}{gross_price:<2}\n")
+            file.write("=" * frame_width + "\n")
+
+        print("Inventory data saved to 'inventory_data.txt'.")
+
+    except Exception as error_occured:
+        print(f"An error occurred while saving inventory data: {error_occured}")
+
+#def delete_inventory():
+
+#def sale_inventory():
+
+#def sale_history():
 
 
 
@@ -115,7 +183,7 @@ def main():
 
         # Print the main menu with a frame
         print("=" * frame_width)
-        print(f'{"#":<12}{"Inventory Management System":^{frame_width - 30}}{"#":>11}')
+        print(f'{"#":<15}{"Inventory Management System":^{frame_width - 30}}{"#":>15}')
         print("=" * frame_width)
         #print()
 
@@ -139,6 +207,16 @@ def main():
         elif choice == '5':
             sale_history()
         elif choice == '6':
+            while True:
+                save_choice = input("Do you want to save the inventory data before exiting? (y/n): ").strip().lower()
+                if save_choice == 'y':
+                    save_inventory()
+                    print("Inventory data saved successfully.")
+                    break
+                elif save_choice == 'n':
+                    break
+                else:
+                    print("Invalid input. Please enter 'y' for yes or 'n' for no.")
             print("Exiting the program...")
             break
         else:
