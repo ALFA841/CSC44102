@@ -1,6 +1,7 @@
 from itertools import product
 import os
 from datetime import datetime, date
+import csv
 
 frame_width = 75
 
@@ -8,6 +9,22 @@ frame_width = 75
 product_data = []
 # This list is to store sale history dataset.
 sale_history_data = []
+
+def preload_datasets():
+    # Preload product dataset from a CSV file
+    try:
+        with open("product_data.csv", "r") as product_file:
+            reader = csv.DictReader(product_file)
+            for row in reader:
+                product_data.append({
+                    "Name": row["Name"],
+                    "Date": row["Date"],
+                    "Quantity": int(row["Quantity"]),
+                    "Price": float(row["Price"])
+                })
+    except FileNotFoundError:
+        print("Product data file not found. Starting with an empty product dataset.")
+        pass
 
 def enter_product_date(inputed_date):
     # Prompt the user to enter a date in the format YYYY-MM-DD
