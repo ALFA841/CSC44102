@@ -11,17 +11,20 @@ product_data = []
 sale_history_data = []
 
 def preload_datasets():
+    folder_path = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(folder_path, "product_data.csv")
     # Preload product dataset from a CSV file
     try:
-        with open("product_data.csv", "r") as product_file:
-            reader = csv.DictReader(product_file)
+        with open(file_path, "r", newline="", encoding="utf-8") as product_file:
+            reader = csv.DictReader(product_file, skipinitialspace=True)
             for row in reader:
-                product_data.append({
-                    "Name": row["Name"],
-                    "Date": row["Date"],
-                    "Quantity": int(row["Quantity"]),
-                    "Price": float(row["Price"])
-                })
+                product = {
+                        "Name": row["product_name"],
+                        "Date": row["product_date"],
+                        "Quantity": float(row["product_quantity"]),
+                        "Price": float(row["product_price"])
+                        }
+                product_data.append(product)
     except FileNotFoundError:
         print("Product data file not found. Starting with an empty product dataset.")
         pass
@@ -389,4 +392,5 @@ def main():
             print("Invalid choice. Please try again by entring a number from 1-6.")
             input("Press Enter to proceed...")
 
+preload_datasets()
 main()
